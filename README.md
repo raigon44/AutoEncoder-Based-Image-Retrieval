@@ -56,6 +56,19 @@ Reconstruction results of the 10 images are shown below:
 
 <img src="reconstruction_loss.JPG" alt="Reconstruction Loss">
 
+#### Check 2: Distribution Analysis
+
+Here we encoded random 50 images from the test dataset using the encoder model which was saved during the training. These encoded 10 dimensional vectors were visualized as pair plots using seaborn library. During the training we had a close look at this distribution. It assisted us in fine tuning the parameters like activation function. We specifically paid attention to how well the vectors were distributed.
+
+Pair plots are shown in the below figure:
+
+<img src="pair_plot.JPG" alt="Pair Plots">
+
+#### Check 3: Projection of Test Images
+
+In this task we visualized the UMAP scatterplot for the images in the test dataset. We assigned specific colors to images belonging to the same class. At the end of the training process we observed this plot to see how separated the images belonging to different classes are. We have some clusters where images from a particular data class dominate. On the other hand images of a few data classes were very sparsely distributed in the plot. We observed this plot regularly and made changes to the hyper parameters to see how it impacts the scatterplot.
+
+
 
 
 
