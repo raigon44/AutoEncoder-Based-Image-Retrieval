@@ -62,12 +62,28 @@ Here we encoded random 50 images from the test dataset using the encoder model w
 
 Pair plots are shown in the below figure:
 
-<img src="pair_plot.JPG" alt="Pair Plots">
+<img src="pair_plots.JPG" alt="Pair Plots">
 
 #### Check 3: Projection of Test Images
 
 In this task we visualized the UMAP scatterplot for the images in the test dataset. We assigned specific colors to images belonging to the same class. At the end of the training process we observed this plot to see how separated the images belonging to different classes are. We have some clusters where images from a particular data class dominate. On the other hand images of a few data classes were very sparsely distributed in the plot. We observed this plot regularly and made changes to the hyper parameters to see how it impacts the scatterplot.
 
+### Data querying
+
+Here we used the saved encoder model to generate 10 dimensional encodings for all the 60000 images (train + test data sets). Additionally we created the query images by picking 20 random images from the test dataset. We calculated the pairwise distance similarity between the both and picked the 10 most similar images.
+
+We used the following three distance measures: Euclidean distance, Cosine distance, Manhattan distance.
+
+For all three we plotted the 10 similar images for each query image and eyeballed their visual similarity. We observed that cosine similarity was giving better results compared to other distance measures.
+
+To further check which distance measure was giving us the best result, we picked 10 images from the test dataset which belonged to the same data class .Here the assumption we have made is that the images belonging to the same data class should be more similar and hence the distance between them should be less. Next we computed the distances using the three methods and plotted the pairwise similarity using the ‘plotly’ library (visualization and code not included in the submission since the library was not mentioned in the assignment sheet). Even from this plot we observed that cosine distance has a better result compared to others. We repeated the same process for 5 more data classes. 
+
+The jupyter notebook **DataQuerying.ipynb** contains the code necessary to perform the data querying.
+
+Sample of the data query result is shown in the below figure.
+In the first row you have the input image and in the second row you have the top 10 similar images computed using the image embedding from the encoder.
+
+<img src="data_query_result.JPG" alt="Data Query Sample Results">
 
 
 
