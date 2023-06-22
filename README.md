@@ -9,8 +9,6 @@ Run the **DataPreperation.py** file in this repository to perform the data prepe
 
 ### Building AutoEncoder
 
-#### AutoEncoder
-
 AutoEncoders uses an unsupervised approach for learning a lower-dimensional feature representation from unlabeled training data. The encoder block learns the mapping from the input data to a low-dimensional latent space z. Having a low dimensional latent space allows to compress the data into small latent vector which learns a very compact enrich feature representation. Decoder learns mapping back from latent space z, to a reconstruct the original data.
 
 Autoencoders are trained using the reconstruction loss, where we compare the difference between the orginal image and the reconstructed image from the decoder. The reconstruction loss forces the latent representation to capture as much "information" about the data as possible.
@@ -29,13 +27,37 @@ During the training process we also observed that, for most of the models after 
 
 **BuildingAutoencoder.py** contains the final code for our building and saving the autoencoder model.
 
-#### Training AutoEncoder
+### Training AutoEncoder
 
 Once we had finalized the hyperparameters during the iterative training process, we ran the final training for 100 epochs. Additionally, the two callbacks that we introduced during the training process assisted us in logging and saving the best model. For saving the best model, we monitored the ‘val_loss’ metric with the value of mode as ‘min’. This was because, in our epoch vs loss plot, we observed that the validation loss was still decreasing with more epochs compared to other metrics. We used tensorboard to visualize the epoch vs accuracy & loss plots generated from the logs saved using the TensorBoard callback.
 
 While observing the epoch vs accuracy plot we saw that after around 80 epoch the was decreasing little while the training accuracy was increasing. But since the difference of accuracy values were training and the validation was not very high, we concluded it was not a case of overfitting. The highest difference between them was at 100 epoch. Training accuracy was 63 and validation accuracy was 61. The difference was only 2. The epoch vs loss plot also had the same trend after 80 epochs.
 
 Below figures have the epoch vs accuracy plot and epoch vs loss plot.
+
+<img src="epoch_accuracy.JPG" alt="epoch vs accuracy">
+
+<img src="epoch_loss.JPG" alt="epoch vs loss">
+
+### Sanity Check
+
+In this step, we evaluated the results of our model to understand how well our model was performing to solve the task sufficiently. We executed the tasks in this step many times during the training process of our model. During the training process, after the model is created during each iteration, we plot the visualization to see how well the model works. And based on these results we made the changes to the model architecture.
+
+ **SanityCheck.py** can be run to recreate the results.
+
+ #### Check 1: Visualizing the reconstruction results
+
+ Here we evaluate the results of the autoencoder model. We picked the first 10 images from the test dataset for this test. After loading the saved autoencoder model from the file system, we used the predict method of the keras.model to get the decoded image array. We passed the first 10 images from the test dataset to the loaded autoencoder model to create the decoded values.
+
+ Now using the matplot library, we plotted the original images and the reconstructed images from the decoded values as various subplots. After retraining the model we had always used to execute this step to see how well the original images are reconstructed by our model.
+The reconstruction quality was not great since our latent space was only 10 dimensions. But still some parts of the reconstructed images were recognizable.
+
+Reconstruction results of the 10 images are shown below:
+
+<img src="reconstruction_loss.JPG" alt="Reconstruction Loss">
+
+
+
 
 
 
