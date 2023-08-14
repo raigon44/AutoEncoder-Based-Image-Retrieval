@@ -64,8 +64,8 @@ class Model:
 
     def train_model(self, x_train, x_test):
         training_history = self.auto_encoder.fit(x_train, x_train,
-                                                 epochs=100,
-                                                 batch_size=256,
+                                                 epochs=config.ModelConfig.epochs,
+                                                 batch_size=config.ModelConfig.batch_size,
                                                  shuffle=True,
                                                  callbacks=[self.tensorboard_callback, self.model_checkpoint_callback],
                                                  validation_data=(x_test, x_test))
