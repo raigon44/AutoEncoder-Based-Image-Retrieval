@@ -63,6 +63,9 @@ class Model:
         return auto_encoder, encoder_model
 
     def train_model(self, x_train, x_test):
+
+        self.auto_encoder_model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
+
         training_history = self.auto_encoder.fit(x_train, x_train,
                                                  epochs=config.ModelConfig.epochs,
                                                  batch_size=config.ModelConfig.batch_size,
