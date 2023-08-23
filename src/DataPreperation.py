@@ -10,8 +10,8 @@ def prepare_data():
     return x_train, y_train, x_test, y_test
 
 
-def check_data_properties():
-    x_train, y_train, x_test, y_test = prepare_data()
+def check_data_properties(x_train, y_train, x_test, y_test):
+    # x_train, y_train, x_test, y_test = prepare_data()
     print("Checking the results........")
 
     print("Verifying if value of image array is [0,1]")
