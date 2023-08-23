@@ -37,7 +37,7 @@ class ImageProcessor:
 
         return noisy_image
 
-    def apply_projective_transform__to_image(self, image):
+    def apply_projective_transform_to_image(self, image):
         """
         This function applies perspective transformation to the given input image and returns the transformed image
         :param image:
@@ -61,7 +61,7 @@ class ImageProcessor:
                                      axis=0)
         return noisy_images
 
-    def apply_projective_transform__to_images(self, images):
+    def apply_projective_transform_to_images(self, images):
         """
         This function receives as input a numpy array of images. To each image it applies perspective transformation using
         openCV library methods and returns the numpy array of transformed images

@@ -7,17 +7,18 @@ import os
 
 class Model:
 
-    def __init__(self, latent_space_dim):
+    def __init__(self, model_config):
         self.tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=config.FileLocation.log_dir + datetime.now().strftime("%Y%m%d-%H%M%S"))
+        self.model_save_path = config.FileLocation.save_dir + str(len(next(os.walk(config.FileLocation.save_dir))))
         self.model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-            filepath=config.FileLocation.save_dir + str(len(next(os.walk(config.FileLocation.save_dir)))),
+            filepath=self.model_save_path,
             save_weights_only=False,
             monitor='val_loss',
             mode='min',
             save_best_only=True
         )
-        self.latent_space_dim = latent_space_dim
+        self.config = model_config
         self.auto_encoder_model, self.encoder_model = self.create_model()
 
     def create_model(self):
@@ -34,7 +35,7 @@ class Model:
         encoder_layer = tf.keras.layers.MaxPooling2D((2, 2))(encoder_layer)
         encoder_layer = tf.keras.layers.Flatten()(encoder_layer)
         encoder_layer = tf.keras.layers.Dense(32, activation='relu')(encoder_layer)
-        encoder_output = tf.keras.layers.Dense(self.latent_space_dim)(encoder_layer)
+        encoder_output = tf.keras.layers.Dense(self.config.latent_space_dim)(encoder_layer)
 
         encoder_model = tf.keras.Model(input_tensor, encoder_output)
         print("Encoder model summary:")
@@ -64,7 +65,7 @@ class Model:
 
     def train_model(self, x_train, x_test):
 
-        self.auto_encoder_model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
+        self.auto_encoder_model.compile(optimizer=self.config.optimizer, loss=self.config.loss, metrics=[self.config.metrics])
 
         training_history = self.auto_encoder.fit(x_train, x_train,
                                                  epochs=config.ModelConfig.epochs,
@@ -75,5 +76,8 @@ class Model:
 
         print("Average test loss: ", np.average(training_history.history['loss']))
 
-        self.encoder_model.save('Encoder_Final.hdf5')
-        self.auto_encoder.save('AutoEncoder_Final.hdf5')
+        self.encoder_model.save('models/Encoder_Final.hdf5')
+        self.auto_encoder.save('models/AutoEncoder_Final.hdf5')
+
+        return
+

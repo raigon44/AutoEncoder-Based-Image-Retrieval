@@ -7,6 +7,9 @@ class ModelConfig:
     latent_space_dimension = 10
     epochs = 65
     batch_size = 256
+    optimizer = 'adam'
+    metrics = 'accuracy'
+    loss = 'mse'
 
 
 class RandomNoiseConfig:
