@@ -1,6 +1,6 @@
 import cv2
 import matplotlib.pyplot as plt
-from Datapreperation import prepare_data
+from DataPreperation import prepare_data
 import tensorflow as tf
 import numpy as np
 
