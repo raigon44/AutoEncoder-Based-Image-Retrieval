@@ -1,11 +1,37 @@
-# AutoEncoder based Image Retrieval System
+# AutoEncoder-based Image Retrieval System
 
-### Dataset Preperation
+In this project, I have built an image retrieval system using the AutoEncoder neural network. The network was trained with the CIFAR-10 dataset.
 
-The CIFAR-10 dataset contains 60000 images 32 x 32 color images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images.
-We used keras.datasets library to load the images. Since we are dealing with color images, each image will have 3 channels (Red,Green & Blue) and each channel will have pixel values in the range of [0 - 255]. To speed up the training and for faster convergence we convert all these values in the image array to be in the range of [0-1]. To achieve this we divide each value in the image array with 255.0. Since in its initial form the values stored in the image array are of type uint8, we have changed it to float32 type before performing the division. Otherwise, the division will result in erroneous results.
+### Install Dependencies
 
-Run the **DataPreperation.py** file in this repository to perform the data preperation.
+<pre>
+pip install -r requirements.text
+</pre>
+
+### Train the AutoEncoder model
+
+You can run the main.py file with the command-line argument --operation=train to start the training.
+
+<pre>
+ python main.py --operation=train
+</pre>
+
+The hyperparameters for training the model are provided in the src/config.py file. If you want to change the hyperparameters, update the config.py file and restart the training.
+
+### Finding similar images using the Encoder model
+
+To find similar images using the encoder model, you can run the main.py file with the command-line argument --operation=query. This would randomly select 5 images from the test dataset and find the 10 most similar images using the 10-dimensional embeddings generated using the trained encoder model. Further details about data querying and training are provided in the below sections.
+<pre>
+ python main.py --operation=query
+</pre>
+
+
+### Dataset Preparation
+
+The CIFAR-10 dataset contains 60000  32 x 32 color images belonging to 10 different classes, with 6000 images per class. There are 50,000 training images and 10,000 test images.
+We used keras.datasets library to load the images. Since we are dealing with color images, each image will have 3 channels (Red, Green and blue), and each channel will have pixel values in the range of [0 - 255]. To speed up the training and for faster convergence we convert all these values in the image array to be in the range of [0-1]. To achieve this we divide each value in the image array with 255.0. Since in its initial form, the values stored in the image array are of type uint8, we have changed it to float32 type before performing the division. Otherwise, the division will result in erroneous results.
+
+Code changes for dataset loading and preparation are present in <pre>/src/data_utils.py</pre>
 
 ### Building AutoEncoder
 
@@ -15,7 +41,7 @@ Autoencoders are trained using the reconstruction loss, where we compare the dif
 
 <img src="AE.PNG" alt="AuotEncoder">
 
-We tried different architectures for both the encoder and the decoder before selecting the architecture which we felt gave us the best result. Initially, we tried with just one hidden dense layer. Then we iteratively kept adding more conv2D layers followed by max-pooling layers and kept on checking both the accuracy scores and the results of the sanity check plots. Some architecture gave us slightly better accuracy, but the sanity check results were not good. For instance, we tried an architecture where we stacked 2 conv2D layers and then added a max pooling layer. We added 3 more of these stacked layers in our encoder and retrained the model. Even though this stacked architecture (trained with 25 epochs) gave a better accuracy but the projected latent values had less number of clusters for images belonging to the same data class and image data was more widely distributed across the space. And even when we extracted similar images using the encoder model, the results were not satisfactory. Hence we decided to abandon this architecture. Similarly we tried some different architectures before fixing on the below one(figure 2 and figure 3). Additionally we also used the python library ‘hyperopt’ to fine tune the hyper parameter like number of hidden units in each layer. Since the library was giving the best results for hyperparameters solely based on the metric like accuracy or loss, after a while we stopped using it. This was because we had to also consider the visualization of different sanity checks to choose the best model that captures the most important features in the 10 dimensional latent space. We used the hyper parameters we got while tuning with hyperopt as the base and changed it manually and retrained to see how the change is impacting the results during sanity check.  
+We tried different architectures for both the encoder and the decoder before selecting the architecture that we felt gave us the best result. Initially, we tried with just one hidden dense layer. Then we iteratively kept adding more conv2D layers followed by max-pooling layers and kept on checking both the accuracy scores and the results of the sanity check plots. Some architecture gave us slightly better accuracy, but the sanity check results were not good. For instance, we tried an architecture where we stacked 2 conv2D layers and then added a max pooling layer. We added 3 more of these stacked layers in our encoder and retrained the model. Even though this stacked architecture (trained with 25 epochs) gave a better accuracy but the projected latent values had less number of clusters for images belonging to the same data class and image data was more widely distributed across the space. And even when we extracted similar images using the encoder model, the results were not satisfactory. Hence we decided to abandon this architecture. Similarly we tried some different architectures before fixing on the below one(figure 2 and figure 3). Additionally, we also used the python library ‘hyperopt’ to fine-tune the hyper parameter like the number of hidden units in each layer. Since the library was giving the best results for hyperparameters solely based on the metric like accuracy or loss, after a while we stopped using it. This was because we had to also consider the visualization of different sanity checks to choose the best model that captures the most important features in the 10 dimensional latent space. We used the hyper parameters we got while tuning with hyperopt as the base and changed it manually and retrained to see how the change is impacting the results during sanity check.  
 
 The intuition for adding conv2D layers was to capture the local features like edges from the input image. And the intuition for adding the max pooling layer was to downsample the input image so as to get the most important global features from the feature map created by the conv2D layers. It also helped to reduce the size of the input to the next layer.
 
@@ -23,9 +49,8 @@ During the training process, we used different optimizers and loss functions to 
 
 We also tried using different activation functions like ‘relu’ and ‘sigmoid’ during the training process. We were getting the best results with relu. And while changing the activation functions during training, we closely monitored the pair plot which plots the distribution of latent space. We got some good distributions while using relu as the activation function for our autoencoder model.
 
-During the training process we also observed that, for most of the models after around 12 epochs, the accuracy reached around 60 and from there the improvement in accuracy was very less.
+During the training process, we also observed that, for most of the models after around 12 epochs, the accuracy reached around 60 and from there the improvement in accuracy was very less.
 
-**BuildingAutoencoder.py** contains the final code for our building and saving the autoencoder model.
 
 ### Training AutoEncoder
 
@@ -42,8 +67,6 @@ Below figures have the epoch vs accuracy plot and epoch vs loss plot.
 ### Sanity Check
 
 In this step, we evaluated the results of our model to understand how well our model was performing to solve the task sufficiently. We executed the tasks in this step many times during the training process of our model. During the training process, after the model is created during each iteration, we plot the visualization to see how well the model works. And based on these results we made the changes to the model architecture.
-
- **SanityCheck.py** can be run to recreate the results.
 
  #### Check 1: Visualizing the reconstruction results
 
@@ -70,7 +93,7 @@ In this task we visualized the UMAP scatterplot for the images in the test datas
 
 ### Data querying
 
-Here we used the saved encoder model to generate 10 dimensional encodings for all the 60000 images (train + test data sets). Additionally we created the query images by picking 20 random images from the test dataset. We calculated the pairwise distance similarity between the both and picked the 10 most similar images.
+Here we used the saved encoder model to generate 10 dimensional encodings for all the 60000 images (train + test data sets). Additionally we created the query images by picking 20 random images from the test dataset. We calculated the pairwise distance similarity between both and picked the 10 most similar images.
 
 We used the following three distance measures: Euclidean distance, Cosine distance, Manhattan distance.
 
