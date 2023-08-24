@@ -10,7 +10,7 @@ class Model:
     def __init__(self, model_config):
         self.tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=config.FileLocation.log_dir + datetime.now().strftime("%Y%m%d-%H%M%S"))
-        self.model_save_path = config.FileLocation.save_dir + str(len(next(os.walk(config.FileLocation.save_dir))))
+        self.model_save_path = config.FileLocation.save_dir
         self.model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
             filepath=self.model_save_path,
             save_weights_only=False,
@@ -64,20 +64,20 @@ class Model:
         return auto_encoder, encoder_model
 
     def train_model(self, x_train, x_test):
+        self.auto_encoder_model.compile(optimizer=self.config.optimizer, loss=self.config.loss,
+                                        metrics=[self.config.metrics])
 
-        self.auto_encoder_model.compile(optimizer=self.config.optimizer, loss=self.config.loss, metrics=[self.config.metrics])
-
-        training_history = self.auto_encoder.fit(x_train, x_train,
-                                                 epochs=config.ModelConfig.epochs,
-                                                 batch_size=config.ModelConfig.batch_size,
-                                                 shuffle=True,
-                                                 callbacks=[self.tensorboard_callback, self.model_checkpoint_callback],
-                                                 validation_data=(x_test, x_test))
+        training_history = self.auto_encoder_model.fit(x_train, x_train,
+                                                       epochs=config.ModelConfig.epochs,
+                                                       batch_size=config.ModelConfig.batch_size,
+                                                       shuffle=True,
+                                                       callbacks=[self.tensorboard_callback,
+                                                                  self.model_checkpoint_callback],
+                                                       validation_data=(x_test, x_test))
 
         print("Average test loss: ", np.average(training_history.history['loss']))
 
         self.encoder_model.save('models/Encoder_Final.hdf5')
-        self.auto_encoder.save('models/AutoEncoder_Final.hdf5')
+        self.auto_encoder_model.save('models/AutoEncoder_Final.hdf5')
 
         return
-

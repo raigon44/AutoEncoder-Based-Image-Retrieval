@@ -1,10 +1,10 @@
 class FileLocation:
-    log_dir = "logs/scalars/retrainwitheight"
+    log_dir = "logs/scalars/train_"
     save_dir = "savedModel/model"
 
 
 class ModelConfig:
-    latent_space_dimension = 10
+    latent_space_dim = 10
     epochs = 65
     batch_size = 256
     optimizer = 'adam'
