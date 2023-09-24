@@ -2,7 +2,7 @@ import tensorflow as tf
 from datetime import datetime
 import numpy as np
 import config
-import os
+from main import logger
 
 
 class Model:
@@ -38,8 +38,7 @@ class Model:
         encoder_output = tf.keras.layers.Dense(self.config.latent_space_dim)(encoder_layer)
 
         encoder_model = tf.keras.Model(input_tensor, encoder_output)
-        print("Encoder model summary:")
-        encoder_model.summary()
+        logger.info(f"Encoder model summary: \n {encoder_model.summary()}")
 
         decoder_layer = tf.keras.layers.Dense(27, activation='relu')(encoder_output)
         decoder_layer = tf.keras.layers.Reshape((3, 3, 3))(decoder_layer)
@@ -58,8 +57,7 @@ class Model:
 
         auto_encoder = tf.keras.Model(input_tensor, decoder_output)
 
-        print("Auto encoder model summary:")
-        auto_encoder.summary()
+        logger.info(f"Auto encoder model summary: \n {auto_encoder.summary()}")
 
         return auto_encoder, encoder_model
 
@@ -75,7 +73,7 @@ class Model:
                                                                   self.model_checkpoint_callback],
                                                        validation_data=(x_test, x_test))
 
-        print("Average test loss: ", np.average(training_history.history['loss']))
+        logger.info(f"Average test loss: {np.average(training_history.history['loss'])}")
 
         self.encoder_model.save('models/Encoder_Final.hdf5')
         self.auto_encoder_model.save('models/AutoEncoder_Final.hdf5')

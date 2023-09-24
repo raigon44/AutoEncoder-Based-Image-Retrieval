@@ -6,6 +6,7 @@ import tensorflow as tf
 from sklearn.metrics.pairwise import cosine_distances
 import matplotlib.pyplot as plt
 import numpy as np
+import logging
 
 parser = ArgumentParser()
 parser.add_argument('--operation', required=True)
@@ -65,7 +66,7 @@ def data_query(encoder_model):
         indices_cosine = sorted(range(len(dist_cosine)), key=lambda sub: dist_cosine[sub])[:10]
         similar_images_cosine.append(indices_cosine)
 
-    print("Plotting the similar images using the Cosine distance")
+    logger.info("Plotting the similar images using the Cosine distance")
     plot_similar_images(similar_images_cosine, query_images)
 
 
@@ -76,12 +77,32 @@ def main():
     elif args.operation == 'query':
         data_query(load_encoder_model('models/AutoEncoder_Final.hdf5'))
     else:
-        print('The entered operation is unknown! Only the operations train and inference are allowed.')
-        exit(0)
+        logger.error('The entered operation is unknown! Only the operations train and inference are allowed.')
+        exit(1)
     return
 
 
+def get_logger():
+    """
+    This function configures and returns the logger which will be used by the rest of the python modules in this project.
+    :return:
+    """
+    logger = logging.getLogger('AutoEncoder_Log')
+    logger.setLevel(logging.INFO)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+
+    logging_format = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    console_handler.setFormatter(logging_format)
+
+    logger.addHandler(console_handler)
+
+    return logger
+
+
 if __name__ == '__main__':
+    logger = get_logger()
     x_train, y_train, x_test, y_test = data_utils.prepare_data()
     x_dataset = np.concatenate((x_train, x_test), axis=0)
     main()

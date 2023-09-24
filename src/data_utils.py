@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from imageprocessor import ImageProcessor
+from main import logger
 
 
 def prepare_data():
@@ -14,34 +15,34 @@ def prepare_data():
 
 def check_data_properties(x_train, y_train, x_test, y_test):
 
-    print("Checking the results........")
+    logger.info("Checking the results........")
 
-    print("Verifying if value of image array is [0,1]")
+    logger.info("Verifying if value of image array is [0,1]")
     if (x_train >= 0).all() and (x_train <= 1).all() and (x_test >= 0).all() and (x_test <= 1).all():
-        print("All values in x_train are in the range [0, 1]")
+        logger.info("All values in x_train are in the range [0, 1]")
     else:
-        print("There are values in the image array which are not inside the range [0, 1]")
-        exit(0)
+        logger.error("There are values in the image array which are not inside the range [0, 1]")
+        exit(1)
 
-    print("Checking the data type of the image arrays")
+    logger.info("Checking the data type of the image arrays")
     if str(x_train.dtype) == "float32" and str(x_test.dtype) == "float32":
-        print("x_train data type: " + str(x_train.dtype))
-        print("x_test data type: " + str(x_test.dtype))
+        logger.info(f"x_train data type:  {x_train.dtype}")
+        logger.info(f"x_test data type:  {x_test.dtype}")
     else:
-        print("Data types of the image array are not Float32")
-        exit(0)
+        logger.error("Data types of the image array are not Float32")
+        exit(1)
 
-    print("Checking the shape of all the numpy arrays")
+    logger.info("Checking the shape of all the numpy arrays")
     if x_train.shape == (50000, 32, 32, 3) and x_test.shape == (10000, 32, 32, 3) and y_train.shape == (
     50000, 1) and y_test.shape == (10000, 1):
-        print("x_train shape: " + str(x_train.shape))
-        print("y_train shape: " + str(y_train.shape))
-        print("x_test shape: " + str(x_test.shape))
-        print("y_test shape: " + str(y_test.shape))
-        print("Shape of all the arrays looks fine!!!")
+        logger.info(f"x_train shape: {x_train.shape}")
+        logger.info(f"y_train shape: {y_train.shape}")
+        logger.info(f"x_test shape: {x_test.shape}")
+        logger.info(f"y_test shape: {y_test.shape}")
+        logger.info("Shape of all the arrays looks fine!!!")
     else:
-        print("Array share do not match the expected value.")
-        exit(0)
+        logger.error("Array share do not match the expected value.")
+        exit(1)
 
     return
 
